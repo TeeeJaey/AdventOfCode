@@ -1,6 +1,5 @@
 import { data } from "./data.js";
 const show = console.log;
-
 const input = data;
 
 const grid = input
@@ -12,6 +11,12 @@ const antinodeGrid = input
   .trim()
   .split("\n")
   .map((line) => line.split(""));
+
+const loc2Str = ({ row, col }) => `${row}-${col}`;
+const str2Loc = (str) => {
+  const [row, col] = str.split("-").map(Number);
+  return { row, col };
+};
 
 const nodes = new Set();
 grid.forEach((line) =>
@@ -50,12 +55,6 @@ const getAntinodeLocationsPart2 = (a, b) => {
   return antinodes;
 };
 
-const loc2Str = ({ row, col }) => `${row}-${col}`;
-const str2Loc = (str) => {
-  const [row, col] = str.split("-").map(Number);
-  return { row, col };
-};
-
 const antinodeLocations = new Set();
 const antinodeLocationsPart2 = new Set();
 const markAntinode = ({ row, col }) => {
@@ -66,28 +65,29 @@ const markAntinode = ({ row, col }) => {
   if (antinodeGrid[row][col] !== ".") antinodeGrid[row][col] = "#";
 };
 
-for (const node of nodes) {
-  const positions = new Set();
-  grid.forEach((line, row) =>
-    line.forEach((item, col) => {
-      if (item == node) positions.add(loc2Str({ row, col }));
-    })
-  );
+export const part2 = () => {
+  for (const node of nodes) {
+    const positions = new Set();
+    grid.forEach((line, row) =>
+      line.forEach((item, col) => {
+        if (item == node) positions.add(loc2Str({ row, col }));
+      })
+    );
 
-  const posList = [...positions];
+    const posList = [...positions];
 
-  posList.forEach((pos, index) => {
-    const a = str2Loc(pos);
-    antinodeLocationsPart2.add(pos);
+    posList.forEach((pos, index) => {
+      const a = str2Loc(pos);
+      antinodeLocationsPart2.add(pos);
 
-    for (let i = index + 1; i < posList.length; i++) {
-      const b = str2Loc(posList[i]);
-      const antinodes = getAntinodeLocationsPart2(a, b);
-      antinodes.forEach((antinode) => markAntinode(antinode));
-    }
-  });
-}
+      for (let i = index + 1; i < posList.length; i++) {
+        const b = str2Loc(posList[i]);
+        const antinodes = getAntinodeLocationsPart2(a, b);
+        antinodes.forEach((antinode) => markAntinode(antinode));
+      }
+    });
+  }
 
-// antinodeGrid.forEach((line) => show(line.join("")));
-
-show(antinodeLocationsPart2.size); // 1067
+  // antinodeGrid.forEach((line) => show(line.join("")));
+  return antinodeLocationsPart2.size;
+};
