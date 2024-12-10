@@ -13,13 +13,8 @@ const showGrid = data
   .map((line) => line.split("").map(() => "."));
 
 const loc2Str = ({ row, col }) => `${row}-${col}`;
-const str2Loc = (str) => {
-  const [row, col] = str.split("-").map(Number);
-  return { row, col };
-};
 
 let nines = new Set();
-
 function check(row, col, prevVal = -1) {
   const currVal = grid[row]?.[col];
   if (currVal === undefined) return 0;
@@ -31,12 +26,12 @@ function check(row, col, prevVal = -1) {
 
   showGrid[row][col] = currVal;
 
-  let hikes = 0;
-  hikes += check(row - 1, col, currVal);
-  hikes += check(row + 1, col, currVal);
-  hikes += check(row, col - 1, currVal);
-  hikes += check(row, col + 1, currVal);
-  return hikes;
+  let rating = 0;
+  rating += check(row - 1, col, currVal);
+  rating += check(row + 1, col, currVal);
+  rating += check(row, col - 1, currVal);
+  rating += check(row, col + 1, currVal);
+  return rating;
 }
 
 let part1 = 0;
@@ -52,5 +47,5 @@ for (let row = 0; row < grid.length; row++) {
     part2 += rating;
   }
 }
-show(part1); // 593
-show(part2); // 1192
+show("Part1:", part1); // 593
+show("Part2:", part2); // 1192
