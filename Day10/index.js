@@ -22,30 +22,35 @@ let nines = new Set();
 
 function check(row, col, prevVal = -1) {
   const currVal = grid[row]?.[col];
-  if (currVal === undefined) return;
-  if (currVal - prevVal !== 1) return;
+  if (currVal === undefined) return 0;
+  if (currVal - prevVal !== 1) return 0;
   if (currVal === 9) {
     nines.add(loc2Str({ row, col }));
-    return;
+    return 1;
   }
 
   showGrid[row][col] = currVal;
 
-  check(row - 1, col, currVal);
-  check(row + 1, col, currVal);
-  check(row, col - 1, currVal);
-  check(row, col + 1, currVal);
+  let hikes = 0;
+  hikes += check(row - 1, col, currVal);
+  hikes += check(row + 1, col, currVal);
+  hikes += check(row, col - 1, currVal);
+  hikes += check(row, col + 1, currVal);
+  return hikes;
 }
 
 let part1 = 0;
+let part2 = 0;
 for (let row = 0; row < grid.length; row++) {
   for (let col = 0; col < grid[row].length; col++) {
     if (grid[row][col] !== 0) continue;
+
     nines = new Set();
-    check(row, col);
+    const rating = check(row, col);
 
     part1 += nines.size;
-    //  show(showGrid.map((line) => line.join("")));
+    part2 += rating;
   }
 }
-show(part1);
+show(part1); // 593
+show(part2); // 1192
