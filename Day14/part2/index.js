@@ -28,27 +28,8 @@ const moveRobots = (seconds = 100) => {
   return final;
 };
 
-const part1 = () => {
-  const midW = (width - 1) / 2;
-  const midH = (height - 1) / 2;
-  const quadrants = [0, 0, 0, 0];
-  finalGrid.forEach((row, rowIndex) => {
-    row.forEach((item, colIndex) => {
-      if (rowIndex === midH || colIndex === midW) return;
-      if (rowIndex < midH) {
-        if (colIndex < midW) quadrants[0] += item;
-        else quadrants[1] += item;
-      } else {
-        if (colIndex < midW) quadrants[2] += item;
-        else quadrants[3] += item;
-      }
-    });
-  });
-  print(quadrants.reduce((acc, item) => acc * item, 1));
-};
-
 function start() {
-  let i = 6800;
+  let i = 6840;
   let divMain = document.createElement("div");
   const interval = setInterval(() => {
     if (document.getElementById("grid-container").hasChildNodes())
@@ -79,6 +60,6 @@ function start() {
 
     if (i === 6888) clearInterval(interval);
     i++;
-  }, 100);
+  }, 60);
 }
 // part2 - 6888
