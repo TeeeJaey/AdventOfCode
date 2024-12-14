@@ -1,0 +1,32 @@
+body {
+  background-color: #222;
+  color: white;
+}
+
+#grid-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid white;
+  width: fit-content;
+}
+
+.grid-line {
+  display: flex;
+  flex-direction: row;
+}
+
+.grid-line-item {
+  width: 5px;
+  height: 5px;
+}
+
+.white {
+  background-color: white;
+}

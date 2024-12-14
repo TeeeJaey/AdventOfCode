@@ -1,9 +1,3 @@
-import { data } from "./data.js";
-
-const print = console.log;
-const printGrid = (grid) =>
-  print(grid.map((l) => l.map((i) => (i > 0 ? i : ".")).join("")));
-
 const qstnSet = data
   .trim()
   .split("\n")
@@ -53,5 +47,38 @@ const part1 = () => {
   print(quadrants.reduce((acc, item) => acc * item, 1));
 };
 
-const finalGrid = moveRobots();
-part1(); // 216772608
+function start() {
+  let i = 6800;
+  let divMain = document.createElement("div");
+  const interval = setInterval(() => {
+    if (document.getElementById("grid-container").hasChildNodes())
+      document.getElementById("grid-container").removeChild(divMain);
+
+    divMain = document.createElement("div");
+    document.getElementById("grid-container").appendChild(divMain);
+    const divLabel = document.createElement("div");
+    divLabel.innerText = `-------------Seconds : ${i}--------------`;
+    divMain.appendChild(divLabel);
+
+    const finalGrid = moveRobots(i);
+    const divGrid = document.createElement("div");
+    divGrid.classList.add("grid");
+    divMain.appendChild(divGrid);
+
+    finalGrid.forEach((line) => {
+      const divLine = document.createElement("div");
+      divLine.classList.add("grid-line");
+      divGrid.appendChild(divLine);
+      line.forEach((item) => {
+        const divItem = document.createElement("div");
+        divItem.classList.add("grid-line-item");
+        if (item > 0) divItem.classList.add("white");
+        divLine.appendChild(divItem);
+      });
+    });
+
+    if (i === 6888) clearInterval(interval);
+    i++;
+  }, 100);
+}
+// part2 - 6888
