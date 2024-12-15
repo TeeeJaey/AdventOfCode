@@ -7,15 +7,16 @@ const grid = getGrid()
   .map((line) => line.split(""));
 const moves = getMoves().split("\n").join("").split("");
 
+const DIRECTION = { UP: "^", RIGHT: ">", DOWN: "v", LEFT: "<" };
 const BOX = "O";
 const ROBOT = "@";
 const EMPTY = ".";
 const WALL = "#";
 const MOVEMENT = {
-  "^": [-1, 0],
-  ">": [0, 1],
-  v: [1, 0],
-  "<": [0, -1],
+  [DIRECTION.UP]: [-1, 0],
+  [DIRECTION.RIGHT]: [0, 1],
+  [DIRECTION.DOWN]: [1, 0],
+  [DIRECTION.LEFT]: [0, -1],
 };
 
 const getStart = () => {
