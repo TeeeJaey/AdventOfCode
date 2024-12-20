@@ -49,31 +49,57 @@ while (grid[curr.row]?.[curr.col] !== END) {
 
 const trackList = [...track];
 
-let part1 = 0;
-let i = 0;
-while (i < trackList.length) {
-  const curr = str2Loc(trackList[i]);
+const part1 = () => {
+  let ans = 0;
+  let i = 0;
+  while (i < trackList.length) {
+    const curr = str2Loc(trackList[i]);
 
-  DELTA.forEach(([dRow, dCol]) => {
-    const skip = {
-      row: curr.row + dRow + dRow,
-      col: curr.col + dCol + dCol,
-    };
+    DELTA.forEach(([dRow, dCol]) => {
+      const skip = {
+        row: curr.row + dRow + dRow,
+        col: curr.col + dCol + dCol,
+      };
 
-    const skipValue = grid[skip.row]?.[skip.col];
-    if (!skipValue) return;
-    if (skipValue === WALL) return;
+      const skipValue = grid[skip.row]?.[skip.col];
+      if (!skipValue) return;
+      if (skipValue === WALL) return;
 
-    let j = i + 1;
-    while (j < trackList.length) {
-      if (loc2Str(skip) === trackList[j] && j - i - 2 >= 100) {
-        part1++;
-        break;
+      let j = i + 1;
+      while (j < trackList.length) {
+        if (loc2Str(skip) === trackList[j] && j - i - 2 >= 100) {
+          ans++;
+          break;
+        }
+        j++;
       }
+    });
+
+    i++;
+  }
+
+  print(ans);
+};
+
+part1(); // 1343
+
+const part2 = () => {
+  let ans = 0;
+  let i = 0;
+  while (i < trackList.length) {
+    let j = i + 100;
+    while (j < trackList.length) {
+      const { row: r1, col: c1 } = str2Loc(trackList[i]);
+      const { row: r2, col: c2 } = str2Loc(trackList[j]);
+
+      const dist = Math.abs(r1 - r2) + Math.abs(c1 - c2);
+      if (dist <= 20 && j - i - dist >= 100) ans++;
+
       j++;
     }
-  });
-  i++;
-}
+    i++;
+  }
+  print(ans);
+};
 
-print(part1);
+part2(); // 982891
