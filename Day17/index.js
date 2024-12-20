@@ -71,5 +71,3 @@ const run = () => {
 };
 
 console.log("Part 1:", run()); // 6,7,5,2,1,3,5,1,7
-
-const part2 = (x) => {};
