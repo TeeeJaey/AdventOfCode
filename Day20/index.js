@@ -14,7 +14,6 @@ const str2Loc = (str) => {
 
 const START = "S";
 const END = "E";
-const EMPTY = ".";
 const WALL = "#";
 const DELTA = [
   [-1, 0],
