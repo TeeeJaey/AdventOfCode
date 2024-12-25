@@ -1,73 +1,133 @@
 import { data } from "./data.js";
 
-let [regs, program] = data.trim().split("\n\n");
-const registers = {};
-const programStr = program.split(" ")[1];
-program = programStr.split(",").map(Number);
-regs.split("\n").forEach((reg) => {
-  registers[reg.slice(9, 10)] = Number(reg.slice(12));
-});
+// constants to access the registers through letters
+const A = 0,
+  B = 1,
+  C = 2;
 
-function getOperandCombo(operand) {
-  if (operand <= 3) return operand;
-  else if (operand === 4) return registers.A;
-  else if (operand === 5) return registers.B;
-  else if (operand === 6) return registers.C;
-  else if (operand === 7) return registers.A;
-}
-
-let pointer = 0;
-let output = [];
-
-function exec(opcode, operand) {
-  const operandCombo = getOperandCombo(operand);
-
-  switch (opcode) {
-    case 0:
-      registers.A = Math.floor(registers.A / 2 ** operandCombo);
-      break;
-
-    case 1:
-      registers.B ^= operand;
-      break;
-
-    case 2:
-      registers.B = operandCombo % 8;
-      break;
-
-    case 3:
-      if (registers.A !== 0) {
-        pointer = operandCombo;
-        return true;
-      }
-      break;
-
-    case 4:
-      registers.B ^= registers.C;
-      break;
-
-    case 5:
-      output.push(operandCombo % 8);
-      break;
-
-    case 6:
-      registers.B = Math.floor(registers.A / 2 ** operandCombo);
-      break;
-
-    case 7:
-      registers.C = Math.floor(registers.A / 2 ** operandCombo);
-      break;
-  }
-}
-
-const run = () => {
-  while (pointer < program.length) {
-    const opcode = program[pointer];
-    const operand = program[pointer + 1];
-    if (!exec(opcode, operand)) pointer += 2;
-  }
-
-  return output.toString();
+// return the combo argument given the argument
+const getArg = (state, arg) => {
+  if (arg <= 3n) return arg;
+  if (arg === 4n) return state.registers[A];
+  if (arg === 5n) return state.registers[B];
+  if (arg === 6n) return state.registers[C];
+  return 0n;
 };
 
-console.log("Part 1:", run()); // 6,7,5,2,1,3,5,1,7
+// a mapping of instructions given the name
+const INSTRUCTIONS = {
+  adv: (state, arg) => {
+    state.registers[A] = state.registers[A] >> getArg(state, arg);
+    return false;
+  },
+  bxl: (state, arg) => {
+    state.registers[B] = state.registers[B] ^ arg;
+    return false;
+  },
+  bst: (state, arg) => {
+    state.registers[B] = getArg(state, arg) & 7n;
+    return false;
+  },
+  jnz: (state, arg) => {
+    if (state.registers[A] !== 0n) state.counter = Number(arg);
+    return state.registers[A] !== 0n;
+  },
+  bxc: (state, arg) => {
+    state.registers[B] = state.registers[B] ^ state.registers[C];
+    return false;
+  },
+  out: (state, arg) => {
+    state.output.push(getArg(state, arg) & 7n);
+    return false;
+  },
+  bdv: (state, arg) => {
+    state.registers[B] = state.registers[A] >> getArg(state, arg);
+    return false;
+  },
+  cdv: (state, arg) => {
+    state.registers[C] = state.registers[A] >> getArg(state, arg);
+    return false;
+  },
+};
+
+// a mapping between the name and the opcode number
+const OPCODES = ["adv", "bxl", "bst", "jnz", "bxc", "out", "bdv", "cdv"];
+
+// runs the program given the inital A register
+const runProgram = (a, instructions) => {
+  const programState = {
+    registers: [a, 0n, 0n],
+    counter: 0,
+    output: [],
+  };
+
+  while (true) {
+    const instruction = instructions[programState.counter];
+    const arg = instructions[programState.counter + 1];
+    const isJump = INSTRUCTIONS[OPCODES[Number(instruction)]](
+      programState,
+      arg
+    );
+
+    // only increment by 2 is no jump occurred
+    programState.counter += isJump ? 0 : 2;
+
+    if (programState.counter < 0 || programState.counter >= instructions.length)
+      break;
+  }
+
+  return programState;
+};
+
+/**
+ * the code of part 1 of the puzzle
+ */
+const part1 = (input) => {
+  // get registers and instructions
+  const parts = input.split("\n\n");
+  const registers = parts[0]
+    .split("\n")
+    .map((line) => BigInt(line.split(": ")[1]));
+  const instructions = parts[1]
+    .split(": ")[1]
+    .split(",")
+    .map((num) => BigInt(num));
+
+  // return the output
+  return runProgram(registers[0], instructions).output.join(",");
+};
+
+/**
+ * the code of part 2 of the puzzle
+ */
+const part2 = (input) => {
+  const instructions = input
+    .split("\n\n")[1]
+    .split(": ")[1]
+    .split(",")
+    .map((num) => BigInt(num));
+
+  // recursively search the a values until the right output comes out
+  // uses the fact that the program only checks three bits
+  // that means to tru all digits, we must use 8^i iterations to move to the next option
+  // also everything must be a bigint because bitwise operations doesn't work on large numbers
+  const searchA = (value, current) => {
+    if (current < 0) return value;
+
+    for (let i = value << 3n; i < (value << 3n) + 8n; i++) {
+      const { output } = runProgram(i, instructions);
+      if (output[0] === instructions[current]) {
+        const finalVal = searchA(i, current - 1);
+        if (finalVal !== -1n) return finalVal;
+      }
+    }
+
+    return -1n;
+  };
+
+  // start searching from the end
+  return searchA(0n, instructions.length - 1);
+};
+
+console.log(part1(data));
+console.log(part2(data));

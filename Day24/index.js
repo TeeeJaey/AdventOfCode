@@ -1,4 +1,5 @@
 import { data } from "./data.js";
+import { part2 } from "./part2.js";
 const print = console.log;
 
 const [valuesRaw, equationsRaw] = data.split("\n\n");
@@ -46,3 +47,4 @@ for (let z = 0; z < 46; z++) {
   part1 = Math.pow(2, z) * zVal + part1;
 }
 print(part1);
+print(part2(data));
