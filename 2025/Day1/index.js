@@ -23,9 +23,9 @@ for (const { dir, value } of input) {
         curr += value;
     } else if (dir === LEFT) {
         if (curr <= 0) {
-            part2 += Math.floor((value - -1 * (-100 - curr)) / 100) + 1;
+            part2 += Math.floor((value + (-100 - curr)) / 100) + 1;
         } else {
-            part2 += Math.floor((value - -1 * (0 - curr)) / 100) + 1;
+            part2 += Math.floor((value + (0 - curr)) / 100) + 1;
         }
         curr -= value;
     }
@@ -42,4 +42,4 @@ for (const { dir, value } of input) {
     }
 }
 
-console.log({ part1, part2 });
+console.log({ part1, part2 }); // 1031 , 5831
